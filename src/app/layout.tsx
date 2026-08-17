@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { SmoothScroll } from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
   title: "Om Parmar — Full-Stack MERN Developer & Software Engineer",
@@ -56,12 +57,14 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
       </head>
-      <body className="bg-[#0A0A0A] text-[#F5F5F5] antialiased selection:bg-[#CCFF00] selection:text-black">
-        <Navbar />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Footer />
+      <body className="bg-[#080808] text-[#F5F5F7] antialiased selection:bg-[#CCFF00] selection:text-black">
+        <SmoothScroll>
+          <Navbar />
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <Footer />
+        </SmoothScroll>
       </body>
     </html>
   );

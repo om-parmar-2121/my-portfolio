@@ -32,13 +32,16 @@ body {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: #0A0A0A;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #262626;
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #404040;
 }
@@ -103,6 +106,7 @@ body {
   0% {
     transform: translateX(0%);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -149,4 +153,3 @@ body {
   outline-offset: 2px;
   border-radius: 4px;
 }
-

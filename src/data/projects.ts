@@ -59,6 +59,7 @@ export const projectsData: ProjectItem[] = [
     galleryImages: [
       "/fintrack-image.png",
     ],
+    liveUrl: "https://fintrack-money-os.vercel.app/",
     githubUrl: "https://github.com/om-parmar-2121/FinTrack",
     architectureHighlights: [
       "Separation of concerns: authentication controllers isolated from financial transaction logic",
@@ -101,6 +102,7 @@ export const projectsData: ProjectItem[] = [
     galleryImages: [
       "/staffphere-image.png",
     ],
+    liveUrl: "https://staff-sphere-six.vercel.app/",
     githubUrl: "https://github.com/om-parmar-2121/StaffSphere",
     architectureHighlights: [
       "Onboarding workflow with pending state and HR verification approval step",
@@ -143,6 +145,7 @@ export const projectsData: ProjectItem[] = [
     galleryImages: [
       "/cms-image.png",
     ],
+    liveUrl: "https://college-management-pro.vercel.app/",
     githubUrl: "https://github.com/om-parmar-2121/College-Management-System",
     architectureHighlights: [
       "Administrator module: Roster creation, schedule synchronization, notice broadcasting",
