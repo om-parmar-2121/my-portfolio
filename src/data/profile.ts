@@ -13,6 +13,7 @@ export interface ProfileData {
   location: string;
   timezone: string;
   contactEmail: string;
+  resumeUrl: string;
   status: {
     available: boolean;
     text: string;
@@ -39,6 +40,7 @@ export const profileData: ProfileData = {
   location: "Ahmedabad, Gujarat, India",
   timezone: "UTC+5:30 / IST",
   contactEmail: "omparmar2105@gmail.com",
+  resumeUrl: "/resume.pdf",
   status: {
     available: true,
     text: "Open to SDE Roles & Internships",

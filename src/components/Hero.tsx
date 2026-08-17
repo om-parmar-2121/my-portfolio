@@ -40,10 +40,10 @@ export const Hero: React.FC = () => {
         </p>
 
         {/* CTA Button Group */}
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-3.5 sm:gap-4">
           <Link
             href="/#contact"
-            className="group inline-flex items-center gap-2.5 px-7 py-3.5 text-[13px] font-bold uppercase tracking-wider text-black bg-[#CCFF00] hover:bg-[#b3e600] rounded-full transition-all duration-300 shadow-xl shadow-[#CCFF00]/20 hover:shadow-[#CCFF00]/35 hover:scale-[1.03] active:scale-[0.98]"
+            className="group inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 text-[13px] font-bold uppercase tracking-wider text-black bg-[#CCFF00] hover:bg-[#b3e600] rounded-full transition-all duration-300 shadow-xl shadow-[#CCFF00]/20 hover:shadow-[#CCFF00]/35 hover:scale-[1.03] active:scale-[0.98]"
           >
             <span>Let&apos;s Connect</span>
             <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -51,11 +51,21 @@ export const Hero: React.FC = () => {
 
           <Link
             href="/#work"
-            className="group inline-flex items-center gap-2.5 px-7 py-3.5 text-[13px] font-medium uppercase tracking-wider text-neutral-200 hover:text-white bg-[#141414]/80 hover:bg-[#181818] border border-white/10 hover:border-white/20 rounded-full backdrop-blur-md transition-all duration-300"
+            className="group inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 text-[13px] font-medium uppercase tracking-wider text-neutral-200 hover:text-white bg-[#141414]/80 hover:bg-[#181818] border border-white/10 hover:border-white/20 rounded-full backdrop-blur-md transition-all duration-300"
           >
             <span>Explore Projects</span>
             <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform text-neutral-500 group-hover:text-[#CCFF00]" />
           </Link>
+
+          <a
+            href={profileData.resumeUrl || "/resume.pdf"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 text-[13px] font-medium uppercase tracking-wider text-neutral-200 hover:text-white bg-[#141414]/80 hover:bg-[#181818] border border-white/10 hover:border-white/20 rounded-full backdrop-blur-md transition-all duration-300"
+          >
+            <span>Resume</span>
+            <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-neutral-500 group-hover:text-[#CCFF00]" />
+          </a>
         </div>
       </div>
     </section>
