@@ -2,6 +2,7 @@ import { Hero } from "@/components/Hero";
 import { Marquee } from "@/components/Marquee";
 import { About } from "@/components/About";
 import { FeaturedWork } from "@/components/FeaturedWork";
+import { DeveloperStats } from "@/components/DeveloperStats";
 import { ContactSection } from "@/components/ContactSection";
 
 export default function HomePage() {
@@ -11,6 +12,7 @@ export default function HomePage() {
       <Marquee />
       <About />
       <FeaturedWork />
+      <DeveloperStats />
       <ContactSection />
     </div>
   );

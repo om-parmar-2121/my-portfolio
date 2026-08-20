@@ -56,7 +56,7 @@ export const ContactSection: React.FC = () => {
           <div className="lg:col-span-5 space-y-6">
             <AnimatedReveal delay={0.1}>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#111111] border border-white/[0.08] text-xs font-mono text-neutral-400">
-                <span className="text-[#CCFF00] font-mono">03 //</span>
+                <span className="text-[#CCFF00] font-mono">04 //</span>
                 <span className="tracking-widest uppercase">GET IN TOUCH</span>
               </div>
             </AnimatedReveal>
