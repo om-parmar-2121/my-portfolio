@@ -10,6 +10,11 @@ interface CalendarData {
   days: ContributionDay[];
 }
 
+interface MonthLabel {
+  name: string;
+  colIndex: number;
+}
+
 export const GithubCalendar: React.FC = () => {
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,20 +35,25 @@ export const GithubCalendar: React.FC = () => {
           const data = await res.json();
           if (data.success) setCalendarData(data);
         }
-      } catch { /* silent */ }
+      } catch { /* silent fallback */ }
       finally { setLoading(false); }
     };
     fetchData();
   }, []);
 
-  const buildWeeks = useCallback((days: ContributionDay[]) => {
+  // Build calendar weeks and calculate dynamic month header positions from actual date sequence
+  const buildCalendar = useCallback((days: ContributionDay[]) => {
+    if (!days || days.length === 0) return { weeks: [], monthLabels: [] };
+
     const weeks: ContributionDay[][] = [];
     let currentWeek: ContributionDay[] = [];
 
-    if (days.length > 0) {
-      const firstDate = new Date(days[0].date);
-      const pad = firstDate.getDay();
-      for (let i = 0; i < pad; i++) currentWeek.push({ date: "", count: 0, level: 0 });
+    // Pad the first week based on starting weekday of the first record (0 = Sun, 1 = Mon...)
+    const firstDate = new Date(days[0].date);
+    const firstDayOfWeek = firstDate.getDay();
+
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      currentWeek.push({ date: "", count: 0, level: 0 });
     }
 
     days.forEach((day) => {
@@ -55,14 +65,35 @@ export const GithubCalendar: React.FC = () => {
     });
 
     if (currentWeek.length > 0) {
-      while (currentWeek.length < 7) currentWeek.push({ date: "", count: 0, level: 0 });
+      while (currentWeek.length < 7) {
+        currentWeek.push({ date: "", count: 0, level: 0 });
+      }
       weeks.push(currentWeek);
     }
-    return weeks;
+
+    // Dynamic month labels derived from actual dates in each week column
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthLabels: MonthLabel[] = [];
+    let lastMonth = -1;
+
+    weeks.forEach((week, wIdx) => {
+      const validDay = week.find((d) => d.date);
+      if (validDay) {
+        const d = new Date(validDay.date);
+        const m = d.getMonth();
+        if (m !== lastMonth) {
+          if (monthLabels.length === 0 || wIdx - monthLabels[monthLabels.length - 1].colIndex >= 3) {
+            monthLabels.push({ name: monthNames[m], colIndex: wIdx });
+            lastMonth = m;
+          }
+        }
+      }
+    });
+
+    return { weeks, monthLabels };
   }, []);
 
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const days = ["","M","","W","","F",""];
+  const daysLabels = ["", "Mon", "", "Wed", "", "Fri", ""];
 
   const getCellColor = (level: number) => {
     switch (level) {
@@ -74,7 +105,10 @@ export const GithubCalendar: React.FC = () => {
     }
   };
 
-  const weeks = calendarData ? buildWeeks(calendarData.days) : [];
+  const { weeks, monthLabels } = calendarData
+    ? buildCalendar(calendarData.days)
+    : { weeks: [], monthLabels: [] };
+
   const longestStreak = calendarData
     ? (() => {
         let max = 0, cur = 0;
@@ -147,21 +181,32 @@ export const GithubCalendar: React.FC = () => {
             </div>
           </div>
 
-          {/* Fully responsive Grid container — NO scrollbar */}
+          {/* Fully responsive Grid container — NO scrollbars */}
           <div ref={gridRef} className="w-full relative pt-1">
-            {/* Month labels */}
-            <div className="flex justify-between text-[9px] font-mono text-neutral-500 mb-1.5 pl-4 sm:pl-5 pr-1">
-              {months.map((m) => (
-                <span key={m}>{m}</span>
+            {/* Dynamic Month Header Labels matching actual week columns */}
+            <div className="relative h-4 mb-1 pl-5 sm:pl-6 pr-1 w-full text-[9px] font-mono text-neutral-500 select-none">
+              {monthLabels.map((m, i) => (
+                <span
+                  key={`${m.name}-${i}`}
+                  className="absolute top-0"
+                  style={{
+                    left: `calc(${(m.colIndex / (weeks.length || 53)) * 100}% + 22px)`,
+                  }}
+                >
+                  {m.name}
+                </span>
               ))}
             </div>
 
             {/* Matrix with Day Labels */}
             <div className="flex gap-1.5 items-center w-full">
               {/* Day labels column */}
-              <div className="flex flex-col justify-between h-full py-[2px] w-3 sm:w-4 shrink-0">
-                {days.map((d, i) => (
-                  <span key={i} className="text-[8px] font-mono text-neutral-600 leading-none h-[11px] sm:h-[13px] flex items-center">
+              <div className="flex flex-col justify-between h-full py-[1px] w-4 sm:w-5 shrink-0 select-none">
+                {daysLabels.map((d, i) => (
+                  <span
+                    key={i}
+                    className="text-[8px] font-mono text-neutral-600 leading-none h-[11px] sm:h-[13px] flex items-center"
+                  >
                     {d}
                   </span>
                 ))}
@@ -213,7 +258,7 @@ export const GithubCalendar: React.FC = () => {
               </div>
             </div>
 
-            {/* Floating Tooltip anchored right on the square without overflowing */}
+            {/* Floating Tooltip anchored right on the square */}
             <AnimatePresence>
               {hoveredDay && (
                 <motion.div
@@ -234,7 +279,7 @@ export const GithubCalendar: React.FC = () => {
                   <span className="text-neutral-400"> contribution{hoveredDay.day.count !== 1 ? "s" : ""} on </span>
                   <span className="text-white">{hoveredDay.day.date}</span>
 
-                  {/* Dynamic pointer arrow */}
+                  {/* Pointer arrow */}
                   <div
                     className={`absolute top-full -mt-[1px] border-4 border-transparent border-t-[#141414] ${
                       hoveredDay.align === "left"

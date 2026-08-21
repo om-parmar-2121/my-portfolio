@@ -3,14 +3,15 @@
 // ==========================================
 import { NextResponse } from "next/server";
 
-interface ContributionDay {
+interface GqlContributionDay {
   contributionCount: number;
   date: string;
   color: string;
+  weekday: number;
 }
 
-interface ContributionWeek {
-  contributionDays: ContributionDay[];
+interface GqlContributionWeek {
+  contributionDays: GqlContributionDay[];
 }
 
 export async function GET(request: Request) {
@@ -18,46 +19,47 @@ export async function GET(request: Request) {
   const username = searchParams.get("username") || "om-parmar-2121";
 
   try {
-    // GitHub GraphQL API to get contribution calendar
-    const query = `
-      query($username: String!) {
-        user(login: $username) {
-          contributionsCollection {
-            contributionCalendar {
-              totalContributions
-              weeks {
-                contributionDays {
-                  contributionCount
-                  date
-                  color
+    const token = process.env.GITHUB_TOKEN;
+
+    if (token) {
+      const query = `
+        query($username: String!) {
+          user(login: $username) {
+            contributionsCollection {
+              contributionCalendar {
+                totalContributions
+                weeks {
+                  contributionDays {
+                    contributionCount
+                    date
+                    color
+                    weekday
+                  }
                 }
               }
             }
           }
         }
-      }
-    `;
+      `;
 
-    const token = process.env.GITHUB_TOKEN;
-
-    if (token) {
       const response = await fetch("https://api.github.com/graphql", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          "User-Agent": "Portfolio-App",
         },
         body: JSON.stringify({ query, variables: { username } }),
-        next: { revalidate: 3600 }, // Cache for 1 hour
+        next: { revalidate: 1800 }, // Cache for 30 minutes
       });
 
       if (response.ok) {
         const data = await response.json();
         const calendar = data?.data?.user?.contributionsCollection?.contributionCalendar;
 
-        if (calendar) {
-          const days = calendar.weeks.flatMap((week: ContributionWeek) =>
-            week.contributionDays.map((day: ContributionDay) => ({
+        if (calendar && calendar.weeks) {
+          const days = calendar.weeks.flatMap((week: GqlContributionWeek) =>
+            week.contributionDays.map((day: GqlContributionDay) => ({
               date: day.date,
               count: day.contributionCount,
               level: getLevel(day.contributionCount),
@@ -73,24 +75,27 @@ export async function GET(request: Request) {
       }
     }
 
-    // Fallback: Use GitHub's public contribution page scraping approach
-    // Fetch from GitHub's public contributions API
+    // Public fallback (if GITHUB_TOKEN is not set or rate-limited)
     const publicRes = await fetch(
       `https://github-contributions-api.jogruber.de/v4/${username}?y=last`,
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: 1800 } }
     );
 
     if (publicRes.ok) {
       const publicData = await publicRes.json();
-      const days = publicData.contributions.map((day: { date: string; count: number; level: number }) => ({
+      const days = (publicData.contributions || []).map((day: { date: string; count: number; level: number }) => ({
         date: day.date,
         count: day.count,
-        level: Math.min(day.level, 4),
+        level: Math.min(day.level, 4) as 0 | 1 | 2 | 3 | 4,
       }));
+
+      const totalContributions =
+        publicData.total?.lastYear ??
+        days.reduce((sum: number, d: { count: number }) => sum + d.count, 0);
 
       return NextResponse.json({
         success: true,
-        totalContributions: publicData.total?.lastYear || days.reduce((sum: number, d: { count: number }) => sum + d.count, 0),
+        totalContributions,
         days,
       });
     }
