@@ -67,9 +67,6 @@ export const ContactSection: React.FC = () => {
                 <span className="block bg-gradient-to-r from-[#D4FF00] via-[#E2FF66] to-[#EEFFB0] bg-clip-text text-transparent">
                   SOMETHING
                 </span>
-                <span className="block bg-gradient-to-r from-[#D0F58A] via-[#E0F5C8] to-[#E6EFE6] bg-clip-text text-transparent">
-                  EXCEPTIONAL.
-                </span>
               </h2>
             </AnimatedReveal>
 
