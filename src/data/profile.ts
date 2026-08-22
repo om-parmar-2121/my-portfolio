@@ -64,7 +64,7 @@ export const profileData: ProfileData = {
     },
     {
       name: "LinkedIn",
-      url: "https://linkedin.com/in/om-parmar",
+      url: "https://www.linkedin.com/in/om-parmar-9843b62b6",
       icon: "Linkedin",
       handle: "om-parmar",
     },
