@@ -12,7 +12,6 @@ export const Marquee: React.FC = () => {
     "JAVASCRIPT",
     "TAILWIND CSS",
     "REST APIS",
-    "SYSTEM DESIGN",
     "DATA STRUCTURES & ALGORITHMS",
   ];
 

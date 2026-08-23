@@ -72,7 +72,7 @@ export const Hero: React.FC = () => {
             </div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-white/[0.03] border border-white/[0.06]">
               <MapPin className="w-3 h-3 text-neutral-400" />
-              <span>Ahmedabad, India • IST</span>
+              <span>Ahmedabad, India</span>
             </div>
           </div>
         </AnimatedReveal>
